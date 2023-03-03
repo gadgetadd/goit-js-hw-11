@@ -12,3 +12,19 @@ body {
   line-height: 1.5;
 }
 
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.gallery {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.photo-card {
+  width: 15%;
+  height: 15%;
+  font-size: 10px;
+}
