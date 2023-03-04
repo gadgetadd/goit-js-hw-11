@@ -8,8 +8,10 @@ export default class PixabayAPI {
     orientation: 'horizontal',
     safesearch: true,
     page: 1,
-    per_page: 12,
+    per_page: 36,
   };
+  totalHits = 0;
+  receivedHits = 0;
   constructor(query) {
     this.options = {
       ...this.baseOpts,
@@ -21,10 +23,15 @@ export default class PixabayAPI {
     try {
       const response = await axios.get(this.BASE_URL, { params: this.options });
       this.options.page += 1;
-      return response.data.hits;
+      this.totalHits = response.data.totalHits;
+      this.receivedHits += response.data.hits.length;
+      return response.data;
     } catch {
-      Notify.failure('Something went wrong');
-      return [];
+      throw new Error('data retrieval error');
     }
+  }
+
+  isLoadingDone() {
+    return this.receivedHits >= this.totalHits;
   }
 }

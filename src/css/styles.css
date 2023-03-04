@@ -15,16 +15,29 @@ body {
 img {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 .gallery {
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
+  overflow-y: scroll;
+  max-height: 80vh;
 }
 
 .photo-card {
+  /* display: flex;
+  flex-direction: column; */
   width: 15%;
-  height: 15%;
+  /* height: 15%; */
   font-size: 10px;
+}
+
+.loading-animation {
+  margin: 0 auto;
+}
+
+.loading-animation.is-hidden {
+  display: none;
 }
