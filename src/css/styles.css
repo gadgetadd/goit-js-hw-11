@@ -77,6 +77,12 @@ img {
   transition: box-shadow 250ms ease;
 }
 
+@media screen and (max-width: 511px) {
+  .photo-card {
+    flex-basis: 100%;
+  }
+}
+
 .photo-card:hover,
 .photo-card:focus {
   box-shadow: rgba(0, 0, 0, 0.5) 1px 5px 15px;
@@ -84,6 +90,7 @@ img {
 
 .info {
   display: flex;
+  gap: 8px;
   justify-content: space-between;
   padding: 5px 10px;
 }
