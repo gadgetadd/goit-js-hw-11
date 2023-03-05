@@ -52,7 +52,7 @@ const onFormSubmit = async e => {
   refs.loadingImg.classList.remove('is-hidden');
   const searchQuery = e.currentTarget.elements.searchQuery.value.trim();
   searchInstance = new PixabayAPI(searchQuery);
-  searchData = await getQueryData(searchInstance);
+  const searchData = await getQueryData(searchInstance);
   renderGallery(searchData);
   if (searchData.totalHits) {
     displayNotification(searchData);
@@ -76,7 +76,7 @@ const onScroll = throttle(async () => {
 
   if (isScrollDown && isLoaded) {
     refs.loadingImg.classList.remove('is-hidden');
-    searchData = await getQueryData(searchInstance);
+    const searchData = await getQueryData(searchInstance);
     renderGallery(searchData);
   }
 }, 300);
