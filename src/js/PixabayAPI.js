@@ -8,7 +8,7 @@ export default class PixabayAPI {
     orientation: 'horizontal',
     safesearch: true,
     page: 1,
-    per_page: 36,
+    per_page: 40,
   };
   totalHits = 0;
   receivedHits = 0;
@@ -31,7 +31,7 @@ export default class PixabayAPI {
     }
   }
 
-  isLoadingDone() {
+  isDone() {
     return this.receivedHits >= this.totalHits;
   }
 }

@@ -19,34 +19,17 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-const onFormSubmit = async e => {
-  e.preventDefault();
-  refs.gallery.innerHTML = '';
-  refs.loadingImg.classList.remove('is-hidden');
-  const searchQuery = e.currentTarget.elements.searchQuery.value;
-  searchInstance = new PixabayAPI(searchQuery);
-  searchData = await getQueryData(searchInstance);
-  renderGallery(searchData);
-  if (searchData.totalHits) {
-    displayNotification(searchData);
-  }
-  refs.gallery.addEventListener('scroll', throttle(onScroll, 300));
-};
-
 const getQueryData = async instance => {
   try {
-    const ddata = await instance.get();
-    console.log(ddata);
-    console.dir(refs.gallery);
-    return ddata;
-  } catch (error) {
-    Notify.error('Network error. Please try again later.');
+    return await instance.get();
+  } catch {
+    Notify.error('Something went wrong. Please try again later.');
   }
 };
-const renderGallery = ({ totalHits = 0, hits = [] }) => {
+const renderGallery = ({ hits = [] }) => {
   refs.loadingImg.classList.add('is-hidden');
   if (hits.length === 0) {
-    Notify.warning(
+    Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
     return;
@@ -63,24 +46,39 @@ const displayNotification = ({ totalHits }) => {
   Notify.success(`Hooray! We found ${totalHits} images.`);
 };
 
-refs.searchForm.addEventListener('submit', onFormSubmit);
+const onFormSubmit = async e => {
+  e.preventDefault();
+  refs.gallery.innerHTML = '';
+  refs.loadingImg.classList.remove('is-hidden');
+  const searchQuery = e.currentTarget.elements.searchQuery.value.trim();
+  searchInstance = new PixabayAPI(searchQuery);
+  searchData = await getQueryData(searchInstance);
+  renderGallery(searchData);
+  if (searchData.totalHits) {
+    displayNotification(searchData);
+  }
+  refs.gallery.addEventListener('scroll', onScroll);
+};
 
-const onScroll = async () => {
+const onScroll = throttle(async () => {
   const scrollOffset = 120;
   const scrollPosition = refs.gallery.scrollHeight - refs.gallery.scrollTop;
   const isScrollDown =
     scrollPosition - scrollOffset <= refs.gallery.clientHeight;
+  const isLoaded = refs.loadingImg.classList.contains('is-hidden');
 
-  if (isScrollDown && searchInstance.isLoadingDone()) {
+  if (isScrollDown && isLoaded && searchInstance.isDone()) {
     refs.gallery.removeEventListener('scroll', onScroll);
-    return Notify.info(
+    return Notify.warning(
       "We're sorry, but you've reached the end of search results."
     );
   }
 
-  if (isScrollDown && refs.loadingImg.classList.contains('is-hidden')) {
+  if (isScrollDown && isLoaded) {
     refs.loadingImg.classList.remove('is-hidden');
     searchData = await getQueryData(searchInstance);
     renderGallery(searchData);
   }
-};
+}, 300);
+
+refs.searchForm.addEventListener('submit', onFormSubmit);
